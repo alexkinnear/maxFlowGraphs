@@ -5,6 +5,7 @@ public class EdmondsKarp {
 
     public static void main(String[] args) throws FileNotFoundException {
         String filename = "demands1.txt";
+        ArrayList<Edge> edgeList = new ArrayList<>();
         System.out.println(filename);
         Scanner scan = new Scanner(new File("data/" + filename));
 
@@ -38,6 +39,8 @@ public class EdmondsKarp {
         // sum of flow for all paths
         int totalFlow = 0;
 
+
+        System.out.println("MAX FLOW:");
         while (true) {
 
             Edge[] parent = new Edge[nodes];
@@ -71,6 +74,11 @@ public class EdmondsKarp {
             // Update flow value for current path
             for (Edge edge = parent[sink]; edge != null; edge = parent[edge.start]) {
                 path.add(edge.end);
+
+                if (!edgeList.contains(edge)) {
+                    edgeList.add(edge);
+                }
+
                 edge.flow += flow;
 
             }
@@ -88,6 +96,13 @@ public class EdmondsKarp {
 
         // print out total flow of graph
         System.out.println("Produced " + totalFlow);
+
+
+        System.out.println();
+        for (Edge edge : edgeList) {
+            System.out.print("Edge (" + edge.start + ", " + edge.end + ") transports " + edge.flow + " cases" + "\n");
+        }
+
 
     }
 }
@@ -111,6 +126,5 @@ class Edge {
         this.flow = flow;
         this.capacity = capacity;
     }
-
 
 }
