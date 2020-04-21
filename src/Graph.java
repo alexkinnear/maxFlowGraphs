@@ -25,20 +25,22 @@ class Edge {
 }
 
 
+
 public class Graph {
 
     private void makeGraph(String filename) throws FileNotFoundException {
         System.out.println(filename);
         Scanner scan = new Scanner(new File("data/" + filename));
 
-        int nodes = scan.nextInt();
+        int vertexCt = scan.nextInt();
         int source = 0;
-        int sink = nodes - 1;
+        int sink = vertexCt - 1;
+        
 
-        Node[] graph = new Node[nodes];
+        Node[] graph = new Node[vertexCt];
 
-        // initialize nodes
-        for (int i = 0; i < nodes; i++)
+        // initialize vertexCt
+        for (int i = 0; i < vertexCt; i++)
             graph[i] = new Node();
 
         // read in edges from file
@@ -56,11 +58,12 @@ public class Graph {
         }
         scan.close();
 
-        EdmondsKarp(graph, nodes, source, sink);
+        EdmondsKarp(graph, vertexCt, source, sink);
     }
+    
 
 
-    private void EdmondsKarp(Node[] graph,int nodes, int source, int sink) {
+    private void EdmondsKarp(Node[] graph,int vertexCt, int source, int sink) {
         // sum of flow for all paths
         int totalFlow = 0;
 
@@ -69,7 +72,7 @@ public class Graph {
         System.out.println("MAX FLOW:");
         while (true) {
 
-            Edge[] parent = new Edge[nodes];
+            Edge[] parent = new Edge[vertexCt];
 
             ArrayList<Node> q = new ArrayList<>();
             q.add(graph[source]);
@@ -85,7 +88,7 @@ public class Graph {
                     }
             }
 
-            // If no path were found (min cut)
+            
             if (parent[sink] == null)
                 break;
 
@@ -128,12 +131,43 @@ public class Graph {
         for (Edge edge : edgeList) {
             System.out.print("Edge (" + edge.start + ", " + edge.end + ") transports " + edge.flow + " cases" + "\n");
         }
+        System.out.println();
+
+        minCut(edgeList, vertexCt, source, sink);
+    }
+    
+    private void minCut(ArrayList<Edge> edges, int vertexCt, int source, int sink) {
+        int startFlow = 0;
+        ArrayList<Edge> startEdges = new ArrayList<>();
+        int endFlow = 0;
+        ArrayList<Edge> endEdges = new ArrayList<>();
+        System.out.println("MIN CUT:");
+        for (Edge edge : edges) {
+            if (edge.start == source) {
+                startEdges.add(edge);
+                startFlow += edge.flow;
+            }
+            else if (edge.end == sink) {
+                endEdges.add(edge);
+                endFlow += edge.flow;
+            }
+        }
+
+
+        if (endFlow < startFlow) {
+            for (Edge edge : endEdges)
+                System.out.print("Edge (" + edge.start + "," + edge.end + ") transports " + edge.flow + " cases" + "\n");
+        }
+        else
+            for (Edge edge : startEdges)
+                System.out.print("Edge (" + edge.start + "," + edge.end + ") transports " + edge.flow + " cases" + "\n");
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        String filename = "demands1.txt";
+        String filename = "demands5.txt";
         Graph graph1 = new Graph();
         graph1.makeGraph(filename);
+        
     }
 }
 
